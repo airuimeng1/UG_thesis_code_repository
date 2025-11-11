@@ -1,33 +1,36 @@
 
 
-/////主成分分析法PCA代码，算数字经济发展水平
-////原始属于依旧来自于名为“independent V”的excle的子表格中，子表格名为“panel data””
+/////Principal Component Analysis (PCA) code, calculating the development level of the digital economy
+////The original belongs still from the excle subtable named "independent V", and the subtable is named "panel data".
 
-
-* 使用前定义：打包需要PCA的所有变量
+* Pre-use definition: Package all variables that require PCA
 global pca_var = "x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22"
-///计算数字经济发展水平使用到了22个三级变量，‘panel data’子表格中变量名字与上述一致
+///Twenty-two third-level variables were used to calculate the development level of the digital economy.
+///The variable names in the 'panel data' subtable are consistent with the above
 
-* 1：检验-KMO和Bartlett
-factortest $pca_var   //若P值显著，KMO=0.9>0.6 ，变量之间相关性较强，适合做因子分析
+* 1：test-KMO and Bartlett
+factortest $pca_var   //If the P-value is significant and KMO=0.9>0.6, the correlation between variables is strong, making it suitable for factor analysis
 	
-* 2：主成分分析
-pca $pca_var  //根据累计贡献率大于(Cumulative)80%，特征值(Eigenvalue)大于1，选取3个主成分
+* 2：PCA
+pca $pca_var  //Based on a Cumulative contribution rate greater than 80% and an Eigenvalue greater than 1, three principal components are selected
 
-* 3：计算主成分得分
+* 3：Calculate the principal component score
 predict c1 c2 c3 c4
 
-* 4：计算数字经济综合指标
-gen 数字经济_主成分=(0.5340*c1+0.1744*c2+0.0742*c3+0.0447*c4)/0.8274
-//主成分乘以对应贡献率再除以累计贡献率，系数是前面pca结果里获取的
+* 4：Calculate the comprehensive indicators of the digital economy
+gen Di_eco_PC=(0.5340*c1+0.1744*c2+0.0742*c3+0.0447*c4)/0.8274
+//The principal component is multiplied by the corresponding contribution rate and then divided by the cumulative contribution rate. 
+//The coefficient is obtained from the previous pca result
 
-*5：最后算出来的综合得分经常会出现负值，为了更直观地比较指标大小，借鉴韩先锋等（2014）的做法，标准化数字经济
-foreach v  in 数字经济_主成分{
+
+*5：//The final calculated comprehensive score often shows negative values. 
+   //To compare the size of the indicators more intuitively, we draw on the practice of Han Xianfeng et al. (2014) to standardize the digital economy
+foreach v  in Di_eco_PC {
 	sum `v'
 	replace `v' =  (`v' / (r(max) - r(min))) * 0.4  +0.6
 }
 
-foreach v in 数字经济_主成分 {
+foreach v in Di_eco_PC {
     sum `v'
     gen `v'_norm = (`v' / (r(max) - r(min))) * 0.4 + 0.6
 }
