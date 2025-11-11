@@ -1,17 +1,17 @@
 clear
-import excel "/Users/ray/Desktop/DT数据/regression data.xlsx", sheet("panel data") firstrow
+import excel "/Users/ray/Desktop/DT/regression data.xlsx", sheet("panel data") firstrow
 
 xtest id year
 
 gen digital_e2 = digital_e^2
 gen digital_p2 = digital_p^2
 
-/////计算工具变量
+/////Compute instrumental variable
 gen iv = (1/Terrain_undulation)*internet_user
 gen ivv = log(iv)
 
 
-//////hausman检验
+//////hausman test
 
 xtreg low_skill_pct digital_e digital_e2 human_capital rd_intensity digitalization gov_intervention industry , fe
 est store fe
@@ -32,24 +32,24 @@ xtreg high_skill_pct digital_e digital_e2 human_capital rd_intensity digitalizat
 est store re
 hausman fe re
 
-/////描述性统计
+/////descriptive statistics
 sum low_skill_pct mid_skill_pct high_skill_pct digital_e digital_e2 digital_p digital_p2 human_capital rd_intensity digitalization gov_intervention industry
-/////描述性结果导出
+/////Descriptive result export
 asdoc sum low_skill_pct mid_skill_pct high_skill_pct digital_e digital_e2 digital_p digital_p2 human_capital rd_intensity digitalization gov_intervention industry
 
 
-///////共线性，vif检验
+///////Collinearity, vif test
 reg low_skill_pct digital_e human_capital rd_intensity digitalization gov_intervention industry 
 estat vif
 
 
 
-/////相关性分析导出结果
+/////The results of the correlation analysis are derived
 logout, save (correlation)word replace:pwcorr_a  low_skill_pct mid_skill_pct high_skill_pct digital_e digital_e2 digital_p digital_p2 human_capital rd_intensity digitalization gov_intervention industry, star1(0.01) star5(0.05) star10(0.1)
 
 
 
-/////基准回归
+/////Benchmark regression
 
 xtreg low_skill_pct digital_e human_capital rd_intensity digitalization gov_intervention industry i.year,fe
 est store a1
@@ -63,11 +63,11 @@ xtreg high_skill_pct digital_e human_capital rd_intensity digitalization gov_int
 est store a5
 xtreg high_skill_pct digital_e digital_e2 human_capital rd_intensity digitalization gov_intervention industry i.year,fe
 est store a6
-//////基准回归导出结果
+//////Derive the benchmark regression
 esttab a1 a2 a3 a4 a5 a6  using 基准回归benchmark.rtf, replace b(%6.3f) se(%6.3f) se ar2(3) star(* 0.1 ** 0.05 *** 0.01) compress nogap  mtitles("low" "low" "mid" "mid" "high" "high") title("基准回归")///////导出regression结果
 
 
-//////robustness test///替换变量法substitution variable method
+//////robustness test///substitution variable method
 xtreg low_skill_pct digital_p human_capital rd_intensity digitalization gov_intervention industry i.year,fe
 est store s1
 xtreg low_skill_pct digital_p digital_p2 human_capital rd_intensity digitalization gov_intervention industry i.year,fe
@@ -80,13 +80,14 @@ xtreg high_skill_pct digital_p human_capital rd_intensity digitalization gov_int
 est store s5
 xtreg high_skill_pct digital_p digital_p2 human_capital rd_intensity digitalization gov_intervention industry  i.year,fe
 est store s6
-/////稳健型检验导出结果
+/////Export the robust test results
 esttab s1 s2 s3 s4 s5 s6  using robustness.rtf, replace b(%6.3f) se(%6.3f) se ar2(3) star(* 0.1 ** 0.05 *** 0.01) compress nogap  mtitles("low" "low" "mid" "mid" "high" "high") title("robustness")
 
 
 
 
-//////////异质性分析///本来异质性想研究东西中东北四部的异质性，数据也找得差不多了，但结果始终不稳健
+//////////Heterogeneity analysis
+///Originally, I intended to study the heterogeneity of the four northeastern regions in the East and West, and I had almost gathered the data, but the results were still not robust
 xtreg low_skill_pct digital_a human_capital rd_intensity digitalization gov_intervention industry i.year if inland_province == 1,fe
 est store c1
 xtreg mid_skill_pct digital_a human_capital rd_intensity digitalization gov_intervention industry i.year if inland_province == 1,fe
@@ -101,14 +102,14 @@ est store c5
 xtreg high_skill_pct digital_a human_capital rd_intensity digitalization gov_intervention industry i.year if coastal_province_province == 1,fe
 est store c6
 
-/////异质性分析导出结果)
+/////Derive the results of heterogeneity analysis
 esttab c1 c2 c3 c4 c5 c6  using 异质性.rtf, replace b(%6.3f) se(%6.3f) se ar2(3) star(* 0.1 ** 0.05 *** 0.01) compress nogap  mtitles("low" "mid" "high" "low" "mid" "high") title("heterogenity ")
 
 
 
 
 
-//////2sls第一阶段：检验工具变量与解释变量是否相关
+//////2sls Phase One: Verify whether the instrumental variable is related to the explanatory variable
 xtreg  digital_e ivv  i.year  human_capital rd_intensity digitalization gov_intervention industry i.year , fe
 est store v1
 xtivreg2 low_skill_pct digital_e2 human_capital rd_intensity digitalization gov_intervention industry (digital_e = ivv), fe robust
@@ -118,14 +119,15 @@ est store v3
 xtivreg2 high_skill_pct digital_e2 human_capital rd_intensity digitalization gov_intervention industry (digital_e = ivv), fe robust
 est store v4
 
-2sls导出结果
+2sls Export results
 esttab v1 v2 v3 v4  using 2sls.rtf, replace b(%6.3f) se(%6.3f) se ar2(3) star(* 0.1 ** 0.05 *** 0.01) compress nogap  mtitles("digital_e" "low_skill_pct" "mid_skill_pct" "high_skill_pct") title("2SLS")
 
 
 ***********************************************************************************************************************************
 **********************************************************************************************************************************
 ************************************************************************************************************************************
-/////////////////////////////////////以下代码与本次回归无关，是我在论文期间学习stata时整理的笔记////////////////////////////////////////////
+/////////////////////////////////////The following code has nothing to do with this regression. /////////////////////////////
+////////////////////////////It is the notes I organized while studying stata during my thesis period////////////////////////////////////////////
 
 
 xtset id year
