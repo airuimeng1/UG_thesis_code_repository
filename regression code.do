@@ -127,7 +127,7 @@ esttab v1 v2 v3 v4  using 2sls.rtf, replace b(%6.3f) se(%6.3f) se ar2(3) star(* 
 **********************************************************************************************************************************
 ************************************************************************************************************************************
 /////////////////////////////////////The following code has nothing to do with this regression. /////////////////////////////
-////////////////////////////It is the notes I organized while studying stata during my thesis period////////////////////////////////////////////
+////////////////////////////But It is the notes I organized while studying stata during my thesis period////////////////////////////////////////////
 
 
 xtset id year
