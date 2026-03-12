@@ -5,7 +5,7 @@ This repository contains the materials for my undergraduate thesis, including:
 - the processed datasets used in the analysis, and
 - Stata `.do` files for index construction and regression analysis.
 
-> **Thesis title:** *What changes has the development of the digital economy brought to China's employment structure?*  
+> **Thesis title:** What changes has the development of the digital economy brought to China's employment structure?
 > **Author:** Airui Meng  
 > **Keywords:** Entropy Weight Method (EWM), Principal Component Analysis (PCA), Stata, empirical regression
 
