@@ -1,0 +1,26 @@
+# Stata
+*.smcl
+*.log
+*.dta.bak
+
+# LaTeX
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.fdb_latexmk
+*.fls
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# Generated output
+output/
+ewm_processed_data.xlsx
+pca_processed_data.xlsx
